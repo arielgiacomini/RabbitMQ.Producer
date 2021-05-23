@@ -8,7 +8,7 @@ using System.Text;
 
 namespace RabbitMQ.Producer.Core
 {
-    public class Program
+    public static class Program
     {
         public class JsonObjeto
         {

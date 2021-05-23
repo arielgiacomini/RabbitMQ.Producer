@@ -9,7 +9,7 @@ namespace RabbitMQ.Producer.Core.Query
     {
         public static IList<ImportacaoRepescagemAtivaViewModel> GetLinesExcel(string pathFileExcel)
         {
-            IList<ImportacaoRepescagemAtivaViewModel> nomeAndIdade = new List<ImportacaoRepescagemAtivaViewModel>();
+            IList<ImportacaoRepescagemAtivaViewModel> repescagemModel = new List<ImportacaoRepescagemAtivaViewModel>();
 
             var xls = new XLWorkbook(pathFileExcel);
 
@@ -23,16 +23,16 @@ namespace RabbitMQ.Producer.Core.Query
 
                 for (int i = 2; i <= totalLinhas; i++)
                 {
-                    nomeAndIdade.Add(new ImportacaoRepescagemAtivaViewModel
+                    repescagemModel.Add(new ImportacaoRepescagemAtivaViewModel
                     {
                         Id = i,
-                        CpfDeRepescagem = planilha.Cell($"A{i}").Value.ToString(),
+                        CpfDeRepescagem = TranslateCPF(planilha.Cell($"A{i}").Value.ToString()),
                         DataFimVigencia = dataVigencia
                     });
                 }
             }
 
-            return nomeAndIdade;
+            return repescagemModel;
         }
 
         private static ImportacaoRepescagemAtivaViewModel TranslateStringForDate(string nameAbaPlanilha)
@@ -68,6 +68,28 @@ namespace RabbitMQ.Producer.Core.Query
             importacaoRepescagemAtivaViewModel.DataFimVigencia = new DateTime(year: DateTime.Now.Year, month: Convert.ToInt32(month), day: Convert.ToInt32(day));
 
             return importacaoRepescagemAtivaViewModel;
+        }
+
+        private static string TranslateCPF(string cpf)
+        {
+            var devolutiva = cpf;
+
+            if (cpf.Length == 8)
+            {
+                devolutiva = "000" + devolutiva;
+            }
+
+            if (cpf.Length == 9)
+            {
+                devolutiva = "00" + devolutiva;
+            }
+
+            if (cpf.Length == 10)
+            {
+                devolutiva = "0" + devolutiva;
+            }
+
+            return devolutiva;
         }
 
         public class ImportacaoRepescagemAtivaViewModel
